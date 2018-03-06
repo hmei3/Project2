@@ -1,6 +1,7 @@
 package com.hmei.spring.controller;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,17 +43,25 @@ public class UserController {
 	@PostMapping(value = "/logging-in")
 	public String loggingIn(HttpServletRequest request, @Valid @ModelAttribute("user") Customer customer,
 			BindingResult bindingResult) {
+		HttpSession session = request.getSession();
 		if (bindingResult.hasErrors()) {
 			System.out.println(bindingResult.getAllErrors());
 			return "login";
 		}
 		Customer tempCustomer = customerServiceImp.findCustomer(customer.getEmail());
 		if (tempCustomer != null && tempCustomer.getPassword().equals(customer.getPassword())) {
-			request.getSession().removeAttribute("user");
-			request.getSession().setAttribute("customer", tempCustomer);
-			return "redirect:/index";
-		} else {
-			request.getSession().setAttribute("loginErrorMsg", "Email or password is wrong!");
+			session.removeAttribute("user");
+			session.setAttribute("customer", tempCustomer);
+			if(session.getAttribute("fromUrl") != null) {
+				String fromUrl = (String)session.getAttribute("fromUrl");
+				session.removeAttribute("fromUrl");
+				return "forward:" + fromUrl;
+			}
+			else
+				return "redirect:/index";
+		} 
+		else {
+			session.setAttribute("loginErrorMsg", "Email or password is wrong!");
 			return "redirect:login";
 		}
 	}
