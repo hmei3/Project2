@@ -14,54 +14,38 @@ $(document).ready(function(){
 			type:"DELETE"
 		})
 		.done(function(responseData){
-			var itemsPrice = remove_anchor.parent().children(".items-price-area").children(".items-price").text();
-			
-			var itemsPrice = parseFloat(itemsPrice.split(",").join(""));
-			var totalPrice = parseFloat($("#total-price").text().split(",").join(""));
+			var itemsPrice = remove_anchor.parent().children(".items-price-area").children(".items-price").text().trim();			
+			itemsPrice = itemsPrice.substring(1);
+			itemsPrice = parseFloat(itemsPrice.split(",").join(""));
 			console.log(itemsPrice);
-			console.log(totalPrice);
+			
+			var totalPrice = $("#total-price").text().trim();
+			totalPrice = totalPrice.substring(1);
+			totalPrice = parseFloat(totalPrice.split(",").join(""));
+
 			remove_anchor.parent().remove();
 			$('#cartSize').text(parseInt($('#cartSize').text()) - parseInt(responseData));
 			if(totalPrice - itemsPrice === 0){
 				$('#checkoutArea').remove();
 			}
 			else{
-				$("#total-price").text((totalPrice - itemsPrice).toFixed(2));
+				let newTotalPrice = totalPrice - itemsPrice;
+				
+				$("#total-price").text(newTotalPrice.toLocaleString('en-US', { style: 'currency', currency: 'USD' }));
 			}
-			var parent = $(".alertArea");
-			parent.children().fadeOut(500, function(){
-				parent.empty();
-				parent.append(`
-						<div class='alert alert-dismissible alert-success'>
-	  						<button type='button' class='close' data-dismiss='alert'>&times;</button>
-	  						One item was successfully removed form your cart!
-						</div>
-	  						`);
-			});
+			alert("Item removed successfully");
 		})
 		.fail(function(){
-			var parent = $(".alertArea");
-			parent.children().fadeOut(500, function(){
-				parent.empty();
-				parent.append(`
-						<div class='alert alert-dismissible alert-danger'>
-	  						<button type='button' class='close' data-dismiss='alert'>&times;</button>
-	  						Something went wrong, please try again!
-						</div>
-	  						`);
-			});
+			alert("Something went wrong, please check and try again!");
 		});
 	});
 
 	$(document).on("click",".update_item",function(event){
 		event.preventDefault();
-		console.log("update anchor clicked");
 		var link = $(this).attr("href");
-		console.log(link);
 		var update_anchor = $(this);
 
 		var updatedAmount = update_anchor.parent().find(".item-amount").val();
-		console.log("updatedAmount " + updatedAmount);
 		var amount = JSON.stringify({"quantity": updatedAmount});
 		alert(amount);
 		$.ajax({
@@ -77,40 +61,36 @@ $(document).ready(function(){
 			});
 			$("#cartSize").text(newCartSize);
 			
-			var totalPrice = parseFloat($("#total-price").text());
-			var prePrice = parseFloat(update_anchor.parent().find(".items-price-area").find(".items-price").text().split(",").join(""));
+			var totalPrice = $("#total-price").text().trim();
+			totalPrice = totalPrice.substring(1);
+			totalPrice = totalPrice.split(",").join("");
+			totalPrice = parseFloat(totalPrice);
+			
+			var prePrice = update_anchor.parent().find(".items-price-area").find(".items-price").text().trim();
+			prePrice = prePrice.substring(1);
+			prePrice = prePrice.split(",").join("");
+			console.log("raw: " + prePrice);
+			prePrice = parseFloat(prePrice);
+			
 			console.log("totalPrice: " + totalPrice);
 			console.log("prePrice: " + prePrice);
 			console.log("responseData: " + responseData);
-			update_anchor.parent().find(".items-price-area").find(".items-price").text(parseFloat(responseData).toFixed(2));
+			
+			update_anchor.parent()
+			.find(".items-price-area")
+			.find(".items-price")
+			.text(parseFloat(responseData).toLocaleString('en-US', { style: 'currency', currency: 'USD' }));
+			
 			var floatResponseData = parseFloat(responseData);
 			var result = totalPrice - prePrice;
 			result = result + floatResponseData;
-			$("#total-price").text(result.toFixed(2));
+			$("#total-price").text(result.toLocaleString('en-US', { style: 'currency', currency: 'USD' }));
+			
 			update_anchor.parent().find(".update_item").hide();
-			var parent = $(".alertArea");
-			parent.children().fadeOut(500, function(){
-				parent.empty();
-				parent.append(`
-						<div class='alert alert-dismissible alert-success'>
-	  						<button type='button' class='close' data-dismiss='alert'>&times;</button>
-	  						One item was successfully updated from your cart!
-						</div>
-	  						`);
-			});
+			alert("Item quantity is upadted successfully!");
 		})
 		.fail(function(){
-			var parent = $(".alertArea");
-			parent.children().fadeOut(500, function(){
-				parent.empty();
-				parent.append(`
-						<div class='alert alert-dismissible alert-danger'>
-	  						<button type='button' class='close' data-dismiss='alert'>&times;</button>
-	  						Something went wrong, please try again!
-						</div>
-	  						`);
-			});
-
+			alert("Quantity updation failed, please check and try again!");
 		});
 	});
 	
@@ -125,28 +105,10 @@ $(document).ready(function(){
 			$(".cart-body").empty();
 			var parent = $(".alertArea");
 			$("#cartSize").text(0);
-			parent.children().fadeOut(500, function(){
-				parent.empty();
-				parent.append(`
-						<div class='alert alert-dismissible alert-success'>
-	  						<button type='button' class='close' data-dismiss='alert'>&times;</button>
-	  						Order is placed successfully!
-						</div>
-	  						`);
-			});
+			alert("Order is placed successfully");
 		})
 		.fail(function(){
-			var parent = $(".alertArea");
-			parent.children().fadeOut(500, function(){
-				parent.empty();
-				parent.append(`
-						<div class='alert alert-dismissible alert-danger'>
-	  						<button type='button' class='close' data-dismiss='alert'>&times;</button>
-	  						Checkout failed! Please check the cart and try again!
-						</div>
-	  						`);
-			});
-
+			alert("Failed to place the order, please check and try again!");
 		});
 	});
 });

@@ -15,16 +15,6 @@
 			<spring:message code="cart.cart"></spring:message>
 		</h1>
 		<hr>
-		<div class="alertArea">
-			<!-- 		<div class="alert alert-dismissible alert-success" id="success-alert">
-				<button type="button" class="close" id="cart-success-alert">&times;</button>
-				Successful!
-			</div>
-			<div class="alert alert-dismissible alert-danger" id="fail-alert">
-				<button type="button" class="close" id="cart-danger-alert">&times;</button>
-				Failed!
-			</div> -->
-		</div>
 		<div class="cart-body">
 			<c:set var="total" value="${0}"></c:set>
 			<c:forEach items="${customer.cart.itemList }" var="item">
