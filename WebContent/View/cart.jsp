@@ -1,5 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-	pageEncoding="UTF-8" isELIgnored="false"%>
+	pageEncoding="UTF-8" isELIgnored="false" errorPage="errorPage.jsp"%>
 <%@ include file="header.jsp"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
@@ -16,6 +16,8 @@
 		</h1>
 		<hr>
 		<div class="cart-body">
+		<c:choose>
+			<c:when test="${fn:length(customer.cart.itemList) gt 0}">
 			<c:set var="total" value="${0}"></c:set>
 			<c:forEach items="${customer.cart.itemList }" var="item">
 				<div>
@@ -71,6 +73,11 @@
 							code="cart.checkOut"></spring:message></a>
 				</div>
 			</c:if>
+			</c:when>
+			<c:otherwise>
+				<p style="color: #b2bec3; position: absolute; left: 50%; top: 50%;"><spring:message code="cart.isEmpty"></spring:message></p>
+			</c:otherwise>
+		</c:choose>
 		</div>
 	</div>
 

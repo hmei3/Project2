@@ -24,9 +24,14 @@ $(document).ready(function(){
 			totalPrice = parseFloat(totalPrice.split(",").join(""));
 
 			remove_anchor.parent().remove();
-			$('#cartSize').text(parseInt($('#cartSize').text()) - parseInt(responseData));
-			if(totalPrice - itemsPrice === 0){
+			var newCartSize =parseInt($('#cartSize').text()) - parseInt(responseData);
+			$('#cartSize').text(newCartSize);
+			if(newCartSize === 0){
+				console.log("Enter");
 				$('#checkoutArea').remove();
+				
+				$(".cart-body").append('<p style="color: #b2bec3; position: absolute; left: 50%; top: 50%;">Cart is empty!</p>');
+				console.log("Appended");
 			}
 			else{
 				let newTotalPrice = totalPrice - itemsPrice;
@@ -47,7 +52,7 @@ $(document).ready(function(){
 
 		var updatedAmount = update_anchor.parent().find(".item-amount").val();
 		var amount = JSON.stringify({"quantity": updatedAmount});
-		alert(amount);
+
 		$.ajax({
 			url:link,
 			method:"PUT",
@@ -69,12 +74,8 @@ $(document).ready(function(){
 			var prePrice = update_anchor.parent().find(".items-price-area").find(".items-price").text().trim();
 			prePrice = prePrice.substring(1);
 			prePrice = prePrice.split(",").join("");
-			console.log("raw: " + prePrice);
+
 			prePrice = parseFloat(prePrice);
-			
-			console.log("totalPrice: " + totalPrice);
-			console.log("prePrice: " + prePrice);
-			console.log("responseData: " + responseData);
 			
 			update_anchor.parent()
 			.find(".items-price-area")
@@ -106,6 +107,7 @@ $(document).ready(function(){
 			var parent = $(".alertArea");
 			$("#cartSize").text(0);
 			alert("Order is placed successfully");
+			$(".cart-body").append('<p style="color: #b2bec3; position: absolute; left: 50%; top: 50%;">Cart is empty!</p>');
 		})
 		.fail(function(){
 			alert("Failed to place the order, please check and try again!");
