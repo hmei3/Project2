@@ -70,7 +70,16 @@
 
 
 	</dependencies>
-	<properties>
+<!-- 	<properties>
 		<java.version>1.8</java.version>
-	</properties>
+	</properties> -->
+	<plugins>
+	    <plugin>    
+		<artifactId>maven-compiler-plugin</artifactId>
+		<configuration>
+		    <source>1.8</source>
+		    <target>1.8</target>
+		</configuration>
+	    </plugin>
+	</plugins>
 </project>
